@@ -72,7 +72,7 @@ public class EngagementService {
             FeedbackEvent event = new FeedbackEvent();
             event.setPayload(payload);
             event.setEventId(UUID.randomUUID().toString());
-            event.setTimestamp(LocalDateTime.now());
+            event.setTimestamp(java.time.Instant.now());
 
             kafkaTemplate.send(KafkaTopics.FEEDBACK_TOPIC, event.getEventId(), event);
             log.info("Sent testimonial notification event for: {}", saved.getName());
@@ -120,7 +120,7 @@ public class EngagementService {
             FeedbackEvent event = new FeedbackEvent();
             event.setPayload(payload);
             event.setEventId(UUID.randomUUID().toString());
-            event.setTimestamp(LocalDateTime.now());
+            event.setTimestamp(java.time.Instant.now());
 
             kafkaTemplate.send(KafkaTopics.FEEDBACK_TOPIC, event.getEventId(), event);
             log.info("Sent feedback notification event for: {}", saved.getName());

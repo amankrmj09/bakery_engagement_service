@@ -25,6 +25,8 @@ public class Testimonial {
 
     private String name;
 
+    private String email;
+
     private String profileImageUrl;
 
     private Integer rating;
