@@ -16,6 +16,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
+import org.springframework.kafka.core.KafkaTemplate;
+import com.blubugtech.common.constants.KafkaTopics;
+import com.blubugtech.common.event.FeedbackEvent;
+import com.blubugtech.common.contract.messaging.FeedbackPayload;
 
 @Slf4j
 @Service
@@ -26,6 +31,7 @@ public class EngagementService {
     private final FeedbackRepository feedbackRepository;
     private final TestimonialSearchRepository testimonialSearchRepository;
     private final FeedbackSearchRepository feedbackSearchRepository;
+    private final KafkaTemplate<String, Object> kafkaTemplate;
 
     @Transactional
     public Testimonial createTestimonial(Testimonial testimonial) {
@@ -51,6 +57,27 @@ public class EngagementService {
             log.debug("Indexed testimonial {} into Elasticsearch", saved.getId());
         } catch (Exception e) {
             log.error("Failed to index testimonial into Elasticsearch: {}", e.getMessage());
+        }
+
+        try {
+            FeedbackPayload payload = FeedbackPayload.builder()
+                .feedbackId(UUID.randomUUID()) // using a random UUID as String ID is used for mongo
+                .firstName(saved.getName())
+                .customerEmail(saved.getEmail())
+                .type("TESTIMONIAL")
+                .rating(saved.getRating())
+                .timestamp(LocalDateTime.now())
+                .build();
+                
+            FeedbackEvent event = new FeedbackEvent();
+            event.setPayload(payload);
+            event.setEventId(UUID.randomUUID().toString());
+            event.setTimestamp(LocalDateTime.now());
+
+            kafkaTemplate.send(KafkaTopics.FEEDBACK_TOPIC, event.getEventId(), event);
+            log.info("Sent testimonial notification event for: {}", saved.getName());
+        } catch (Exception e) {
+            log.error("Failed to send Kafka event for testimonial: {}", e.getMessage());
         }
         
         return saved;
@@ -79,6 +106,26 @@ public class EngagementService {
             log.debug("Indexed feedback {} into Elasticsearch", saved.getId());
         } catch (Exception e) {
             log.error("Failed to index feedback into Elasticsearch: {}", e.getMessage());
+        }
+
+        try {
+            FeedbackPayload payload = FeedbackPayload.builder()
+                .feedbackId(UUID.randomUUID())
+                .firstName(saved.getName())
+                .customerEmail(saved.getEmail())
+                .type(saved.getType() != null ? saved.getType() : "FEEDBACK")
+                .timestamp(LocalDateTime.now())
+                .build();
+                
+            FeedbackEvent event = new FeedbackEvent();
+            event.setPayload(payload);
+            event.setEventId(UUID.randomUUID().toString());
+            event.setTimestamp(LocalDateTime.now());
+
+            kafkaTemplate.send(KafkaTopics.FEEDBACK_TOPIC, event.getEventId(), event);
+            log.info("Sent feedback notification event for: {}", saved.getName());
+        } catch (Exception e) {
+            log.error("Failed to send Kafka event for feedback: {}", e.getMessage());
         }
         
         return saved;
