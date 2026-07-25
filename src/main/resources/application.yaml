@@ -1,3 +1,10 @@
+server:
+  port: ${SERVER_PORT:8087}
+
 spring:
   application:
     name: bakery-engagement-service
+  profiles:
+    active: ${ACTIVE_PROFILE:dev}
+  config:
+    import: "optional:configserver:${CONFIG_SERVER_URL:http://localhost:8081}"
