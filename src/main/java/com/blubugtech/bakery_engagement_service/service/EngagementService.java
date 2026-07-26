@@ -159,29 +159,29 @@ public class EngagementService {
         return updated;
     }
 
-    public List<Testimonial> getFeaturedTestimonials() {
-        return testimonialRepository.findByIsFeaturedTrue();
+    public org.springframework.data.domain.Page<Testimonial> getFeaturedTestimonials(int page, int size) {
+        return testimonialRepository.findByIsFeaturedTrue(PageRequest.of(page, size));
     }
 
-    public List<Testimonial> getAllTestimonials() {
-        return testimonialRepository.findAll();
+    public org.springframework.data.domain.Page<Testimonial> getAllTestimonials(int page, int size) {
+        return testimonialRepository.findAll(PageRequest.of(page, size));
     }
 
-    public List<Feedback> getAllFeedbacks() {
-        return feedbackRepository.findAll();
+    public org.springframework.data.domain.Page<Feedback> getAllFeedbacks(int page, int size) {
+        return feedbackRepository.findAll(PageRequest.of(page, size));
     }
 
-    public List<TestimonialDocument> searchTestimonialsByUsername(String username) {
+    public org.springframework.data.domain.Page<TestimonialDocument> searchTestimonialsByUsername(String username, int page, int size) {
         if (username == null || username.trim().isEmpty()) {
-            return testimonialSearchRepository.findAll(PageRequest.of(0, 50)).getContent();
+            return testimonialSearchRepository.findAll(PageRequest.of(page, size));
         }
-        return testimonialSearchRepository.findByNameContainingIgnoreCase(username.trim(), PageRequest.of(0, 50)).getContent();
+        return testimonialSearchRepository.findByNameContainingIgnoreCase(username.trim(), PageRequest.of(page, size));
     }
 
-    public List<FeedbackDocument> searchFeedbacksByUsername(String query) {
+    public org.springframework.data.domain.Page<FeedbackDocument> searchFeedbacksByUsername(String query, int page, int size) {
         if (query == null || query.trim().isEmpty()) {
-            return feedbackSearchRepository.findAll(PageRequest.of(0, 50)).getContent();
+            return feedbackSearchRepository.findAll(PageRequest.of(page, size));
         }
-        return feedbackSearchRepository.findByNameContainingIgnoreCaseOrEmailContainingIgnoreCase(query.trim(), query.trim(), PageRequest.of(0, 50)).getContent();
+        return feedbackSearchRepository.findByNameContainingIgnoreCaseOrEmailContainingIgnoreCase(query.trim(), query.trim(), PageRequest.of(page, size));
     }
 }

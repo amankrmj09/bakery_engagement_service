@@ -26,18 +26,25 @@ public class EngagementController {
     }
 
     @GetMapping("/testimonials")
-    public ResponseEntity<List<Testimonial>> getAllTestimonials() {
-        return ResponseEntity.ok(engagementService.getAllTestimonials());
+    public ResponseEntity<org.springframework.data.web.PagedModel<Testimonial>> getAllTestimonials(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        return ResponseEntity.ok(new org.springframework.data.web.PagedModel<>(engagementService.getAllTestimonials(page, size)));
     }
 
     @GetMapping("/testimonials/featured")
-    public ResponseEntity<List<Testimonial>> getFeaturedTestimonials() {
-        return ResponseEntity.ok(engagementService.getFeaturedTestimonials());
+    public ResponseEntity<org.springframework.data.web.PagedModel<Testimonial>> getFeaturedTestimonials(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        return ResponseEntity.ok(new org.springframework.data.web.PagedModel<>(engagementService.getFeaturedTestimonials(page, size)));
     }
 
     @GetMapping("/testimonials/search")
-    public ResponseEntity<List<TestimonialDocument>> searchTestimonials(@RequestParam(required = false) String username) {
-        return ResponseEntity.ok(engagementService.searchTestimonialsByUsername(username));
+    public ResponseEntity<org.springframework.data.web.PagedModel<TestimonialDocument>> searchTestimonials(
+            @RequestParam(required = false) String username,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        return ResponseEntity.ok(new org.springframework.data.web.PagedModel<>(engagementService.searchTestimonialsByUsername(username, page, size)));
     }
 
     @PutMapping("/testimonials/{id}/feature")
@@ -57,12 +64,17 @@ public class EngagementController {
     }
 
     @GetMapping("/feedback")
-    public ResponseEntity<List<Feedback>> getAllFeedbacks() {
-        return ResponseEntity.ok(engagementService.getAllFeedbacks());
+    public ResponseEntity<org.springframework.data.web.PagedModel<Feedback>> getAllFeedbacks(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        return ResponseEntity.ok(new org.springframework.data.web.PagedModel<>(engagementService.getAllFeedbacks(page, size)));
     }
 
     @GetMapping("/feedback/search")
-    public ResponseEntity<List<FeedbackDocument>> searchFeedbacks(@RequestParam(required = false) String query) {
-        return ResponseEntity.ok(engagementService.searchFeedbacksByUsername(query));
+    public ResponseEntity<org.springframework.data.web.PagedModel<FeedbackDocument>> searchFeedbacks(
+            @RequestParam(required = false) String query,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        return ResponseEntity.ok(new org.springframework.data.web.PagedModel<>(engagementService.searchFeedbacksByUsername(query, page, size)));
     }
 }
