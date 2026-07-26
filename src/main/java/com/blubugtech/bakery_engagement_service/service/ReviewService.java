@@ -59,10 +59,9 @@ public class ReviewService {
         return ReviewResponse.fromEntity(review);
     }
 
-    public List<ReviewResponse> getProductReviews(String productId) {
-        return reviewRepository.findByProductId(productId).stream()
-                .map(ReviewResponse::fromEntity)
-                .collect(Collectors.toList());
+    public Page<ReviewResponse> getProductReviews(String productId, Pageable pageable) {
+        return reviewRepository.findByProductId(productId, pageable)
+                .map(ReviewResponse::fromEntity);
     }
 
     @Transactional

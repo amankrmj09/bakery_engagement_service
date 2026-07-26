@@ -73,8 +73,9 @@ public class EngagementController {
     @GetMapping("/feedback/search")
     public ResponseEntity<org.springframework.data.web.PagedModel<FeedbackDocument>> searchFeedbacks(
             @RequestParam(required = false) String query,
+            @RequestParam(required = false) String type,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
-        return ResponseEntity.ok(new org.springframework.data.web.PagedModel<>(engagementService.searchFeedbacksByUsername(query, page, size)));
+        return ResponseEntity.ok(new org.springframework.data.web.PagedModel<>(engagementService.searchFeedbacksByUsername(query, type, page, size)));
     }
 }

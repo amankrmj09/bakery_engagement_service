@@ -178,10 +178,21 @@ public class EngagementService {
         return testimonialSearchRepository.findByNameContainingIgnoreCase(username.trim(), PageRequest.of(page, size));
     }
 
-    public org.springframework.data.domain.Page<FeedbackDocument> searchFeedbacksByUsername(String query, int page, int size) {
+    public org.springframework.data.domain.Page<FeedbackDocument> searchFeedbacksByUsername(String query, String type, int page, int size) {
         if (query == null || query.trim().isEmpty()) {
+            if (type != null && !type.trim().isEmpty()) {
+                return feedbackSearchRepository.findByType(type.trim(), PageRequest.of(page, size));
+            }
             return feedbackSearchRepository.findAll(PageRequest.of(page, size));
         }
-        return feedbackSearchRepository.findByNameContainingIgnoreCaseOrEmailContainingIgnoreCase(query.trim(), query.trim(), PageRequest.of(page, size));
+        
+        String q = query.trim();
+        if (type != null && !type.trim().isEmpty()) {
+            String t = type.trim();
+            return feedbackSearchRepository.findByTypeAndNameContainingIgnoreCaseOrTypeAndEmailContainingIgnoreCase(
+                t, q, t, q, PageRequest.of(page, size)
+            );
+        }
+        return feedbackSearchRepository.findByNameContainingIgnoreCaseOrEmailContainingIgnoreCase(q, q, PageRequest.of(page, size));
     }
 }

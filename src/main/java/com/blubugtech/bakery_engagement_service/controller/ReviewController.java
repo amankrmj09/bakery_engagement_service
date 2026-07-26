@@ -41,11 +41,11 @@ public class ReviewController {
 
     @Operation(summary = "Get all reviews for a product")
     @GetMapping("/product/{id}")
-    public ResponseEntity<List<ReviewResponse>> getProductReviews(
-            @PathVariable("id") String id) {
+    public ResponseEntity<org.springframework.data.web.PagedModel<ReviewResponse>> getProductReviews(
+            @PathVariable("id") String id, org.springframework.data.domain.Pageable pageable) {
         log.info("Get reviews request received for product ID: {}", id);
-        List<ReviewResponse> reviews = reviewService.getProductReviews(id);
-        return ResponseEntity.ok(reviews);
+        Page<ReviewResponse> reviews = reviewService.getProductReviews(id, pageable);
+        return ResponseEntity.ok(new org.springframework.data.web.PagedModel<>(reviews));
     }
 
     @Operation(summary = "Delete a review")
@@ -79,12 +79,12 @@ public class ReviewController {
     @Operation(summary = "Get reported reviews")
     @GetMapping("/reported")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Page<ReviewResponse>> getReportedReviews(
+    public ResponseEntity<org.springframework.data.web.PagedModel<ReviewResponse>> getReportedReviews(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
         log.info("Get reported reviews request received");
         Pageable pageable = PageRequest.of(page, size);
-        return ResponseEntity.ok(reviewService.getReportedReviews(pageable));
+        return ResponseEntity.ok(new org.springframework.data.web.PagedModel<>(reviewService.getReportedReviews(pageable)));
     }
 
     @Operation(summary = "Dismiss review report")
