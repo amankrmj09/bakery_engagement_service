@@ -4,6 +4,8 @@ import com.blubugtech.bakery_engagement_service.entity.Feedback;
 import com.blubugtech.bakery_engagement_service.entity.Testimonial;
 import com.blubugtech.bakery_engagement_service.repository.FeedbackRepository;
 import com.blubugtech.bakery_engagement_service.repository.TestimonialRepository;
+import com.blubugtech.bakery_engagement_service.entity.ContactDetails;
+import com.blubugtech.bakery_engagement_service.repository.ContactDetailsRepository;
 import com.blubugtech.bakery_engagement_service.search.document.FeedbackDocument;
 import com.blubugtech.bakery_engagement_service.search.document.TestimonialDocument;
 import com.blubugtech.bakery_engagement_service.search.repository.FeedbackSearchRepository;
@@ -31,6 +33,7 @@ public class EngagementService {
     private final FeedbackRepository feedbackRepository;
     private final TestimonialSearchRepository testimonialSearchRepository;
     private final FeedbackSearchRepository feedbackSearchRepository;
+    private final ContactDetailsRepository contactDetailsRepository;
     private final KafkaTemplate<String, Object> kafkaTemplate;
 
     @Transactional
@@ -194,5 +197,30 @@ public class EngagementService {
             );
         }
         return feedbackSearchRepository.findByNameContainingIgnoreCaseOrEmailContainingIgnoreCase(q, q, PageRequest.of(page, size));
+    }
+
+    public ContactDetails getContactDetails() {
+        List<ContactDetails> details = contactDetailsRepository.findAll();
+        if (details.isEmpty()) {
+            ContactDetails defaultDetails = ContactDetails.builder()
+                    .address("123 Bakery Street, Sweet Town\nNY 10001, USA")
+                    .phoneNumbers(List.of("+1 (555) 123-4567", "+1 (555) 987-6543"))
+                    .emails(List.of("hello@blubugbakery.com", "support@blubugbakery.com"))
+                    .createdAt(LocalDateTime.now())
+                    .updatedAt(LocalDateTime.now())
+                    .build();
+            return contactDetailsRepository.save(defaultDetails);
+        }
+        return details.get(0);
+    }
+
+    @Transactional
+    public ContactDetails updateContactDetails(ContactDetails request) {
+        ContactDetails current = getContactDetails();
+        current.setAddress(request.getAddress());
+        current.setPhoneNumbers(request.getPhoneNumbers());
+        current.setEmails(request.getEmails());
+        current.setUpdatedAt(LocalDateTime.now());
+        return contactDetailsRepository.save(current);
     }
 }

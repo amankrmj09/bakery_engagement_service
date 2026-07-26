@@ -2,6 +2,7 @@ package com.blubugtech.bakery_engagement_service.controller;
 
 import com.blubugtech.bakery_engagement_service.entity.Feedback;
 import com.blubugtech.bakery_engagement_service.entity.Testimonial;
+import com.blubugtech.bakery_engagement_service.entity.ContactDetails;
 import com.blubugtech.bakery_engagement_service.search.document.FeedbackDocument;
 import com.blubugtech.bakery_engagement_service.search.document.TestimonialDocument;
 import com.blubugtech.bakery_engagement_service.service.EngagementService;
@@ -77,5 +78,15 @@ public class EngagementController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
         return ResponseEntity.ok(new org.springframework.data.web.PagedModel<>(engagementService.searchFeedbacksByUsername(query, type, page, size)));
+    }
+
+    @GetMapping("/contact-details")
+    public ResponseEntity<ContactDetails> getContactDetails() {
+        return ResponseEntity.ok(engagementService.getContactDetails());
+    }
+
+    @PutMapping("/contact-details")
+    public ResponseEntity<ContactDetails> updateContactDetails(@RequestBody ContactDetails request) {
+        return ResponseEntity.ok(engagementService.updateContactDetails(request));
     }
 }
