@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import org.springframework.kafka.core.KafkaTemplate;
 import com.blubugtech.common.constants.KafkaTopics;
@@ -202,16 +203,33 @@ public class EngagementService {
     public ContactDetails getContactDetails() {
         List<ContactDetails> details = contactDetailsRepository.findAll();
         if (details.isEmpty()) {
+            Map<String, String> defaultSocialLinks = new java.util.HashMap<>();
+            defaultSocialLinks.put("instagram", "");
+            defaultSocialLinks.put("facebook", "");
+            defaultSocialLinks.put("twitter", "");
+            defaultSocialLinks.put("threads", "");
             ContactDetails defaultDetails = ContactDetails.builder()
                     .address("123 Bakery Street, Sweet Town\nNY 10001, USA")
                     .phoneNumbers(List.of("+1 (555) 123-4567", "+1 (555) 987-6543"))
                     .emails(List.of("hello@blubugbakery.com", "support@blubugbakery.com"))
+                    .socialLinks(defaultSocialLinks)
                     .createdAt(LocalDateTime.now())
                     .updatedAt(LocalDateTime.now())
                     .build();
             return contactDetailsRepository.save(defaultDetails);
         }
-        return details.get(0);
+        ContactDetails existing = details.get(0);
+        // Backfill socialLinks for existing records that predate this field
+        if (existing.getSocialLinks() == null) {
+            Map<String, String> emptyLinks = new java.util.HashMap<>();
+            emptyLinks.put("instagram", "");
+            emptyLinks.put("facebook", "");
+            emptyLinks.put("twitter", "");
+            emptyLinks.put("threads", "");
+            existing.setSocialLinks(emptyLinks);
+            contactDetailsRepository.save(existing);
+        }
+        return existing;
     }
 
     @Transactional
@@ -220,6 +238,9 @@ public class EngagementService {
         current.setAddress(request.getAddress());
         current.setPhoneNumbers(request.getPhoneNumbers());
         current.setEmails(request.getEmails());
+        if (request.getSocialLinks() != null) {
+            current.setSocialLinks(request.getSocialLinks());
+        }
         current.setUpdatedAt(LocalDateTime.now());
         return contactDetailsRepository.save(current);
     }
