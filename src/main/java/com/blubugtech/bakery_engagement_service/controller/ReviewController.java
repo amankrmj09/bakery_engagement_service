@@ -2,6 +2,7 @@ package com.blubugtech.bakery_engagement_service.controller;
 
 import com.blubugtech.bakery_engagement_service.dto.review.ReviewRequest;
 import com.blubugtech.bakery_engagement_service.dto.review.ReviewResponse;
+import com.blubugtech.bakery_engagement_service.dto.review.ReviewUpdateRequest;
 import com.blubugtech.bakery_engagement_service.service.ReviewService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -37,6 +38,21 @@ public class ReviewController {
         log.info("Add review request received for product ID: {}", id);
         ReviewResponse response = reviewService.addReview(id, request);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
+    @Operation(summary = "Update an existing review")
+    @PutMapping("/product/{id}/{reviewId}")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<ReviewResponse> updateReview(
+            @PathVariable("id") String productId,
+            @PathVariable("reviewId") String reviewId,
+            @RequestHeader(value = "X-User-Id", required = false) String headerUserId,
+            @Valid @RequestBody ReviewUpdateRequest request) {
+        
+        log.info("Update review request received for product ID: {}, review ID: {}", productId, reviewId);
+        String userId = headerUserId != null ? headerUserId : "current-user-id";
+        ReviewResponse response = reviewService.updateReview(productId, reviewId, userId, request);
+        return ResponseEntity.ok(response);
     }
 
     @Operation(summary = "Get all reviews for a product")

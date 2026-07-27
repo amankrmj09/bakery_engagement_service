@@ -2,6 +2,7 @@ package com.blubugtech.bakery_engagement_service.service;
 
 import com.blubugtech.bakery_engagement_service.dto.review.ReviewRequest;
 import com.blubugtech.bakery_engagement_service.dto.review.ReviewResponse;
+import com.blubugtech.bakery_engagement_service.dto.review.ReviewUpdateRequest;
 import com.blubugtech.bakery_engagement_service.entity.Review;
 import com.blubugtech.bakery_engagement_service.repository.ReviewRepository;
 import com.blubugtech.common.constants.KafkaTopics;
@@ -56,6 +57,25 @@ public class ReviewService {
         review = reviewRepository.save(review);
         publishReviewEvent(review, "CREATED");
 
+        return ReviewResponse.fromEntity(review);
+    }
+
+    @Transactional
+    public ReviewResponse updateReview(String productId, String reviewId, String userId, ReviewUpdateRequest request) {
+        Review review = reviewRepository.findByIdAndUserId(reviewId, userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Review", "id", reviewId));
+        
+        if (!review.getProductId().equals(productId)) {
+            throw new IllegalArgumentException("Review does not belong to the specified product");
+        }
+        
+        review.setRating(request.getRating());
+        review.setComment(request.getComment());
+        review.setUpdatedAt(LocalDateTime.now());
+        
+        review = reviewRepository.save(review);
+        publishReviewEvent(review, "UPDATED");
+        
         return ReviewResponse.fromEntity(review);
     }
 
