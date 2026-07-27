@@ -208,10 +208,11 @@ public class EngagementService {
             defaultSocialLinks.put("facebook", "");
             defaultSocialLinks.put("twitter", "");
             defaultSocialLinks.put("threads", "");
+            defaultSocialLinks.put("website", "");
             ContactDetails defaultDetails = ContactDetails.builder()
-                    .address("123 Bakery Street, Sweet Town\nNY 10001, USA")
-                    .phoneNumbers(List.of("+1 (555) 123-4567", "+1 (555) 987-6543"))
-                    .emails(List.of("hello@blubugbakery.com", "support@blubugbakery.com"))
+                    .address("")
+                    .phoneNumbers(List.of())
+                    .emails(List.of())
                     .socialLinks(defaultSocialLinks)
                     .createdAt(LocalDateTime.now())
                     .updatedAt(LocalDateTime.now())
@@ -226,7 +227,11 @@ public class EngagementService {
             emptyLinks.put("facebook", "");
             emptyLinks.put("twitter", "");
             emptyLinks.put("threads", "");
+            emptyLinks.put("website", "");
             existing.setSocialLinks(emptyLinks);
+            contactDetailsRepository.save(existing);
+        } else if (!existing.getSocialLinks().containsKey("website")) {
+            existing.getSocialLinks().put("website", "");
             contactDetailsRepository.save(existing);
         }
         return existing;
