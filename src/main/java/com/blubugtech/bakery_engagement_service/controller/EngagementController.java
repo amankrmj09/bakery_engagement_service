@@ -59,6 +59,12 @@ public class EngagementController {
         }
     }
 
+    @DeleteMapping("/testimonials/{id}")
+    public ResponseEntity<Void> deleteTestimonial(@PathVariable String id) {
+        engagementService.deleteTestimonial(id);
+        return ResponseEntity.noContent().build();
+    }
+
     @PostMapping("/feedback")
     public ResponseEntity<Feedback> createFeedback(@RequestBody Feedback feedback) {
         return ResponseEntity.status(HttpStatus.CREATED).body(engagementService.createFeedback(feedback));

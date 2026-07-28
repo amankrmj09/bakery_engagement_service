@@ -21,9 +21,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import org.springframework.kafka.core.KafkaTemplate;
-import com.blubugtech.common.constants.KafkaTopics;
-import com.blubugtech.common.event.FeedbackEvent;
-import com.blubugtech.common.contract.messaging.FeedbackPayload;
+import org.blubakery.bakery_common_libs.constants.KafkaTopics;
+import org.blubakery.bakery_common_libs.event.FeedbackEvent;
+import org.blubakery.bakery_common_libs.contract.messaging.FeedbackPayload;
 
 @Slf4j
 @Service
@@ -161,6 +161,18 @@ public class EngagementService {
         }
 
         return updated;
+    }
+
+    @Transactional
+    public void deleteTestimonial(String id) {
+        log.info("Deleting testimonial with id: {}", id);
+        testimonialRepository.deleteById(id);
+        try {
+            testimonialSearchRepository.deleteById(id);
+            log.debug("Deleted testimonial {} from Elasticsearch", id);
+        } catch (Exception e) {
+            log.warn("Could not delete testimonial from Elasticsearch for id {}: {}", id, e.getMessage());
+        }
     }
 
     public org.springframework.data.domain.Page<Testimonial> getFeaturedTestimonials(int page, int size) {
