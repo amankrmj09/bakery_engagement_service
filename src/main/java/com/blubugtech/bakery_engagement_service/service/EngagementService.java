@@ -21,9 +21,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import org.springframework.kafka.core.KafkaTemplate;
-import org.blubakery.bakery_common_libs.constants.KafkaTopics;
-import org.blubakery.bakery_common_libs.event.FeedbackEvent;
-import org.blubakery.bakery_common_libs.contract.messaging.FeedbackPayload;
+import org.blubakery.common.messaging.constants.KafkaTopics;
+import org.blubakery.common.messaging.event.FeedbackEvent;
+import org.blubakery.common.messaging.contract.messaging.FeedbackPayload;
 
 @Slf4j
 @Service

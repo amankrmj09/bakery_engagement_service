@@ -17,19 +17,17 @@ java {
 repositories {
     mavenLocal()
     mavenCentral()
-    maven {
-        name = "GitHubPackages"
-        url = uri("https://maven.pkg.github.com/amankrmj09/bakery-common-libs")
-        credentials {
-            username = System.getenv("GITHUB_ACTOR") ?: project.findProperty("gpr.user") as String?
-            password = System.getenv("GITHUB_TOKEN") ?: project.findProperty("gpr.key") as String?
-        }
+}
     }
 }
 
 extra["springCloudVersion"] = "2025.0.3"
 
 dependencies {
+    implementation("org.blubakery.libs:bakery_common_security:1.0.0")
+    implementation("org.blubakery.libs:bakery_common_messaging:1.0.0")
+    implementation("org.blubakery.libs:bakery_common_core:1.0.0")
+    implementation("org.blubakery.libs:bakery_common_feign:1.0.0")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.kafka:spring-kafka")
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
@@ -39,7 +37,7 @@ dependencies {
     implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0")
     implementation("org.springframework.boot:spring-boot-starter-validation")
-    implementation("org.blubakery.libs:bakery_common_libs:2.5.5")
+    
     compileOnly("org.projectlombok:lombok")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     annotationProcessor("org.projectlombok:lombok")
