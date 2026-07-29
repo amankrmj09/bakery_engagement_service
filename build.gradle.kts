@@ -4,8 +4,6 @@ plugins {
     id("io.spring.dependency-management") version "1.1.7"
 }
 
-group = "com.blubugtech"
-version = "1.0.0"
 description = "bakery_engagement_service"
 
 java {
@@ -50,8 +48,6 @@ repositories {
         }
     }
 }
-    }
-}
 
 extra["springCloudVersion"] = "2025.0.3"
 
@@ -67,7 +63,8 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.cloud:spring-cloud-starter-config")
     implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client")
-    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0")
+    
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-api:2.8.4")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     
     compileOnly("org.projectlombok:lombok")
