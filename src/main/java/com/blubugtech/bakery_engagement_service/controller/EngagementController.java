@@ -86,6 +86,17 @@ public class EngagementController {
         return ResponseEntity.ok(new org.springframework.data.web.PagedModel<>(engagementService.searchFeedbacksByUsername(query, type, page, size)));
     }
 
+    @DeleteMapping("/feedback/{id}")
+    public ResponseEntity<Void> deleteFeedback(@PathVariable String id) {
+        engagementService.deleteFeedback(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/feedback/{id}/status")
+    public ResponseEntity<Feedback> updateFeedbackStatus(@PathVariable String id, @RequestParam String status) {
+        return ResponseEntity.ok(engagementService.updateFeedbackStatus(id, status));
+    }
+
     @GetMapping("/contact-details")
     public ResponseEntity<ContactDetails> getContactDetails() {
         return ResponseEntity.ok(engagementService.getContactDetails());

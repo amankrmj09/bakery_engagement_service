@@ -136,6 +136,26 @@ public class EngagementService {
     }
 
     @Transactional
+    public Feedback updateFeedbackStatus(String id, String status) {
+        Feedback feedback = feedbackRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Feedback not found: " + id));
+        feedback.setStatus(status);
+        feedback.setUpdatedAt(LocalDateTime.now());
+        Feedback updated = feedbackRepository.save(feedback);
+        
+        try {
+            feedbackSearchRepository.findById(id).ifPresent(doc -> {
+                doc.setStatus(status);
+                feedbackSearchRepository.save(doc);
+            });
+        } catch (Exception e) {
+            log.warn("Could not update feedback status in Elasticsearch for id {}: {}", id, e.getMessage());
+        }
+        
+        return updated;
+    }
+
+    @Transactional
     public Testimonial toggleFeatured(String id, boolean featured) {
         Testimonial testimonial = testimonialRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Testimonial not found: " + id));
@@ -172,6 +192,18 @@ public class EngagementService {
             log.debug("Deleted testimonial {} from Elasticsearch", id);
         } catch (Exception e) {
             log.warn("Could not delete testimonial from Elasticsearch for id {}: {}", id, e.getMessage());
+        }
+    }
+
+    @Transactional
+    public void deleteFeedback(String id) {
+        log.info("Deleting feedback with id: {}", id);
+        feedbackRepository.deleteById(id);
+        try {
+            feedbackSearchRepository.deleteById(id);
+            log.debug("Deleted feedback {} from Elasticsearch", id);
+        } catch (Exception e) {
+            log.warn("Could not delete feedback from Elasticsearch for id {}: {}", id, e.getMessage());
         }
     }
 
