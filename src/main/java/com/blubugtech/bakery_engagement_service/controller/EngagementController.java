@@ -9,6 +9,7 @@ import com.blubugtech.bakery_engagement_service.service.EngagementService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +21,7 @@ import java.util.Map;
 @RequestMapping("/api/v1/engagement")
 @RequiredArgsConstructor
 @Tag(name = "Engagement", description = "Engagement management APIs")
+@Slf4j
 public class EngagementController {
 
     private final EngagementService engagementService;
@@ -27,6 +29,7 @@ public class EngagementController {
     @Operation(summary = "Create a testimonial")
     @PostMapping("/testimonials")
     public ResponseEntity<Testimonial> createTestimonial(@RequestBody Testimonial testimonial) {
+        log.info("Request received to create testimonial for user: {}", testimonial.getUsername());
         return ResponseEntity.status(HttpStatus.CREATED).body(engagementService.createTestimonial(testimonial));
     }
 
@@ -61,8 +64,10 @@ public class EngagementController {
         try {
             return ResponseEntity.ok(engagementService.toggleFeatured(id, featured));
         } catch (IllegalStateException e) {
+            log.error("Illegal state while toggling featured status", e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", e.getMessage()));
         } catch (IllegalArgumentException e) {
+            log.error("Illegal argument while toggling featured status", e);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", e.getMessage()));
         }
     }
@@ -77,6 +82,7 @@ public class EngagementController {
     @Operation(summary = "Create feedback")
     @PostMapping("/feedback")
     public ResponseEntity<Feedback> createFeedback(@RequestBody Feedback feedback) {
+        log.info("Request received to create feedback for user: {}", feedback.getUsername());
         return ResponseEntity.status(HttpStatus.CREATED).body(engagementService.createFeedback(feedback));
     }
 

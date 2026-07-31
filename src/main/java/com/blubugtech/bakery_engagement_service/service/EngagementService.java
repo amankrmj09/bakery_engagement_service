@@ -60,7 +60,7 @@ public class EngagementService {
             testimonialSearchRepository.save(doc);
             log.debug("Indexed testimonial {} into Elasticsearch", saved.getId());
         } catch (Exception e) {
-            log.error("Failed to index testimonial into Elasticsearch: {}", e.getMessage());
+            log.error("Failed to index testimonial into Elasticsearch: {}", e.getMessage(), e);
         }
 
         try {
@@ -81,7 +81,7 @@ public class EngagementService {
             kafkaTemplate.send(KafkaTopics.FEEDBACK_TOPIC, event.getEventId(), event);
             log.info("Sent testimonial notification event for: {}", saved.getName());
         } catch (Exception e) {
-            log.error("Failed to send Kafka event for testimonial: {}", e.getMessage());
+            log.error("Failed to send Kafka event for testimonial: {}", e.getMessage(), e);
         }
         
         return saved;
@@ -109,7 +109,7 @@ public class EngagementService {
             feedbackSearchRepository.save(doc);
             log.debug("Indexed feedback {} into Elasticsearch", saved.getId());
         } catch (Exception e) {
-            log.error("Failed to index feedback into Elasticsearch: {}", e.getMessage());
+            log.error("Failed to index feedback into Elasticsearch: {}", e.getMessage(), e);
         }
 
         try {
@@ -129,7 +129,7 @@ public class EngagementService {
             kafkaTemplate.send(KafkaTopics.FEEDBACK_TOPIC, event.getEventId(), event);
             log.info("Sent feedback notification event for: {}", saved.getName());
         } catch (Exception e) {
-            log.error("Failed to send Kafka event for feedback: {}", e.getMessage());
+            log.error("Failed to send Kafka event for feedback: {}", e.getMessage(), e);
         }
         
         return saved;
@@ -149,7 +149,7 @@ public class EngagementService {
                 feedbackSearchRepository.save(doc);
             });
         } catch (Exception e) {
-            log.warn("Could not update feedback status in Elasticsearch for id {}: {}", id, e.getMessage());
+            log.error("Could not update feedback status in Elasticsearch for id {}: {}", id, e.getMessage(), e);
         }
         
         return updated;
@@ -177,7 +177,7 @@ public class EngagementService {
                 testimonialSearchRepository.save(doc);
             });
         } catch (Exception e) {
-            log.warn("Could not update featured status in Elasticsearch for id {}: {}", id, e.getMessage());
+            log.error("Could not update featured status in Elasticsearch for id {}: {}", id, e.getMessage(), e);
         }
 
         return updated;
@@ -191,7 +191,7 @@ public class EngagementService {
             testimonialSearchRepository.deleteById(id);
             log.debug("Deleted testimonial {} from Elasticsearch", id);
         } catch (Exception e) {
-            log.warn("Could not delete testimonial from Elasticsearch for id {}: {}", id, e.getMessage());
+            log.error("Could not delete testimonial from Elasticsearch for id {}: {}", id, e.getMessage(), e);
         }
     }
 
@@ -203,7 +203,7 @@ public class EngagementService {
             feedbackSearchRepository.deleteById(id);
             log.debug("Deleted feedback {} from Elasticsearch", id);
         } catch (Exception e) {
-            log.warn("Could not delete feedback from Elasticsearch for id {}: {}", id, e.getMessage());
+            log.error("Could not delete feedback from Elasticsearch for id {}: {}", id, e.getMessage(), e);
         }
     }
 
