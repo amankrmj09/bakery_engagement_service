@@ -6,7 +6,10 @@ import org.springframework.context.annotation.Import;
 import org.blubakery.common.security.security.MethodSecurityConfig;
 import org.blubakery.common.messaging.kafka.KafkaConfig;
 
+import org.springframework.scheduling.annotation.EnableAsync;
+
 @SpringBootApplication
+@EnableAsync
 @Import({MethodSecurityConfig.class, KafkaConfig.class})
 public class BakeryEngagementServiceApplication {
 

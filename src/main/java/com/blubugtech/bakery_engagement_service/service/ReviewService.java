@@ -4,25 +4,19 @@ import com.blubugtech.bakery_engagement_service.dto.review.ReviewRequest;
 import com.blubugtech.bakery_engagement_service.dto.review.ReviewResponse;
 import com.blubugtech.bakery_engagement_service.dto.review.ReviewUpdateRequest;
 import com.blubugtech.bakery_engagement_service.entity.Review;
+import com.blubugtech.bakery_engagement_service.event.ReviewDomainEvent;
 import com.blubugtech.bakery_engagement_service.repository.ReviewRepository;
-import org.blubakery.common.messaging.constants.KafkaTopics;
-import org.blubakery.common.messaging.contract.messaging.ReviewPayload;
-import org.blubakery.common.messaging.event.ReviewEvent;
 import org.blubakery.common.core.exception.common.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -30,7 +24,7 @@ import java.util.stream.Collectors;
 public class ReviewService {
 
     private final ReviewRepository reviewRepository;
-    private final KafkaTemplate<String, Object> kafkaTemplate;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Transactional
     public ReviewResponse addReview(String productId, ReviewRequest request) {
@@ -55,7 +49,7 @@ public class ReviewService {
         }
 
         review = reviewRepository.save(review);
-        publishReviewEvent(review, "CREATED");
+        eventPublisher.publishEvent(new ReviewDomainEvent(this, review, "CREATED"));
 
         return ReviewResponse.fromEntity(review);
     }
@@ -74,7 +68,7 @@ public class ReviewService {
         review.setUpdatedAt(LocalDateTime.now());
         
         review = reviewRepository.save(review);
-        publishReviewEvent(review, "UPDATED");
+        eventPublisher.publishEvent(new ReviewDomainEvent(this, review, "UPDATED"));
         
         return ReviewResponse.fromEntity(review);
     }
@@ -94,7 +88,7 @@ public class ReviewService {
         }
         
         reviewRepository.delete(review);
-        publishReviewEvent(review, "DELETED");
+        eventPublisher.publishEvent(new ReviewDomainEvent(this, review, "DELETED"));
     }
 
     @Transactional
@@ -126,38 +120,5 @@ public class ReviewService {
         review.setReportReason(null);
         review.setReportedAt(null);
         reviewRepository.save(review);
-    }
-
-    private void publishReviewEvent(Review review, String action) {
-        try {
-            List<Review> allReviews = reviewRepository.findByProductId(review.getProductId());
-            int totalReviews = allReviews.size();
-            double sum = allReviews.stream().mapToInt(Review::getRating).sum();
-            double avg = totalReviews > 0 ? sum / totalReviews : 0.0;
-            double roundedAvg = Math.round(avg * 10.0) / 10.0;
-
-            ReviewPayload payload = ReviewPayload.builder()
-                    .reviewId(review.getId())
-                    .productId(review.getProductId())
-                    .userId(review.getUserId())
-                    .userName(review.getUserName())
-                    .rating(review.getRating())
-                    .comment(review.getComment())
-                    .timestamp(LocalDateTime.now())
-                    .action(action)
-                    .averageRating(roundedAvg)
-                    .totalReviews(totalReviews)
-                    .build();
-
-            ReviewEvent event = new ReviewEvent();
-            event.setPayload(payload);
-            event.setEventId(UUID.randomUUID().toString());
-            event.setTimestamp(Instant.now());
-
-            kafkaTemplate.send(KafkaTopics.REVIEWS_TOPIC, event.getEventId(), event);
-            log.info("Published review {} event for product {}", action, review.getProductId());
-        } catch (Exception e) {
-            log.error("Failed to publish review event for product {}", review.getProductId(), e);
-        }
     }
 }
