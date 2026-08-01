@@ -29,7 +29,7 @@ public class EngagementController {
     @Operation(summary = "Create a testimonial")
     @PostMapping("/testimonials")
     public ResponseEntity<Testimonial> createTestimonial(@RequestBody Testimonial testimonial) {
-        log.info("Request received to create testimonial for user: {}", testimonial.getUsername());
+        log.info("Request received to create testimonial for user: {}", testimonial.getName());
         return ResponseEntity.status(HttpStatus.CREATED).body(engagementService.createTestimonial(testimonial));
     }
 
@@ -82,7 +82,7 @@ public class EngagementController {
     @Operation(summary = "Create feedback")
     @PostMapping("/feedback")
     public ResponseEntity<Feedback> createFeedback(@RequestBody Feedback feedback) {
-        log.info("Request received to create feedback for user: {}", feedback.getUsername());
+        log.info("Request received to create feedback for user: {}", feedback.getName());
         return ResponseEntity.status(HttpStatus.CREATED).body(engagementService.createFeedback(feedback));
     }
 
