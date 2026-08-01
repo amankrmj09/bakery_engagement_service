@@ -1,8 +1,10 @@
 package com.blubugtech.bakery_engagement_service.event;
 
 import com.blubugtech.bakery_engagement_service.entity.Feedback;
+import lombok.Getter;
 import org.springframework.context.ApplicationEvent;
 
+@Getter
 public class FeedbackDomainEvent extends ApplicationEvent {
     private final Feedback feedback;
     private final String action;
@@ -11,13 +13,5 @@ public class FeedbackDomainEvent extends ApplicationEvent {
         super(source);
         this.feedback = feedback;
         this.action = action;
-    }
-
-    public Feedback getFeedback() {
-        return feedback;
-    }
-
-    public String getAction() {
-        return action;
     }
 }

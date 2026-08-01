@@ -34,6 +34,7 @@ public class FeedbackService {
         Feedback saved = feedbackRepository.save(feedback);
         
         eventPublisher.publishEvent(new FeedbackDomainEvent(this, saved, "CREATED"));
+        
         return saved;
     }
 
@@ -45,7 +46,8 @@ public class FeedbackService {
         feedback.setUpdatedAt(LocalDateTime.now());
         Feedback updated = feedbackRepository.save(feedback);
         
-        eventPublisher.publishEvent(new FeedbackDomainEvent(this, updated, "UPDATED"));
+        eventPublisher.publishEvent(new FeedbackDomainEvent(this, updated, "STATUS_UPDATED"));
+        
         return updated;
     }
 

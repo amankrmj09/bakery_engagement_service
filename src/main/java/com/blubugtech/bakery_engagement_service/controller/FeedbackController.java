@@ -45,16 +45,16 @@ public class FeedbackController {
         return ResponseEntity.ok(new org.springframework.data.web.PagedModel<>(feedbackService.searchFeedbacksByUsername(query, type, page, size)));
     }
 
+    @Operation(summary = "Update feedback status")
+    @PutMapping("/{id}/status")
+    public ResponseEntity<Feedback> updateFeedbackStatus(@PathVariable String id, @RequestParam String status) {
+        return ResponseEntity.ok(feedbackService.updateFeedbackStatus(id, status));
+    }
+
     @Operation(summary = "Delete feedback")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteFeedback(@PathVariable String id) {
         feedbackService.deleteFeedback(id);
         return ResponseEntity.noContent().build();
-    }
-
-    @Operation(summary = "Update feedback status")
-    @PutMapping("/{id}/status")
-    public ResponseEntity<Feedback> updateFeedbackStatus(@PathVariable String id, @RequestParam String status) {
-        return ResponseEntity.ok(feedbackService.updateFeedbackStatus(id, status));
     }
 }

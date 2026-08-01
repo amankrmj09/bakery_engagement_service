@@ -16,7 +16,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/v1/engagement/testimonials")
 @RequiredArgsConstructor
-@Tag(name = "Testimonials", description = "Testimonial management APIs")
+@Tag(name = "Testimonial", description = "Testimonial management APIs")
 @Slf4j
 public class TestimonialController {
 

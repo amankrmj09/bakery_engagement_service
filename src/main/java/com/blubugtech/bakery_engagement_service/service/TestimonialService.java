@@ -35,6 +35,7 @@ public class TestimonialService {
         Testimonial saved = testimonialRepository.save(testimonial);
         
         eventPublisher.publishEvent(new TestimonialDomainEvent(this, saved, "CREATED"));
+        
         return saved;
     }
 
@@ -55,6 +56,7 @@ public class TestimonialService {
         Testimonial updated = testimonialRepository.save(testimonial);
 
         eventPublisher.publishEvent(new TestimonialDomainEvent(this, updated, "UPDATED"));
+
         return updated;
     }
 

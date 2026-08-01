@@ -3,14 +3,13 @@ package com.blubugtech.bakery_engagement_service.listener;
 import com.blubugtech.bakery_engagement_service.entity.Review;
 import com.blubugtech.bakery_engagement_service.event.ReviewDomainEvent;
 import com.blubugtech.bakery_engagement_service.repository.ReviewRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.blubakery.common.messaging.constants.KafkaTopics;
 import org.blubakery.common.messaging.contract.messaging.ReviewPayload;
 import org.blubakery.common.messaging.event.ReviewEvent;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
 import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
@@ -26,12 +25,12 @@ public class ReviewEventListener {
     private final KafkaTemplate<String, Object> kafkaTemplate;
     private final ReviewRepository reviewRepository;
 
-    @Async
     @EventListener
-    public void handleReviewDomainEvent(ReviewDomainEvent event) {
+    public void handleReviewEvent(ReviewDomainEvent event) {
         Review review = event.getReview();
         String action = event.getAction();
-        
+        log.info("Handling ReviewDomainEvent for action: {}", action);
+
         try {
             List<Review> allReviews = reviewRepository.findByProductId(review.getProductId());
             int totalReviews = allReviews.size();

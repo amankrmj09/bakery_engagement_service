@@ -1,8 +1,10 @@
 package com.blubugtech.bakery_engagement_service.event;
 
 import com.blubugtech.bakery_engagement_service.entity.Review;
+import lombok.Getter;
 import org.springframework.context.ApplicationEvent;
 
+@Getter
 public class ReviewDomainEvent extends ApplicationEvent {
     private final Review review;
     private final String action;
@@ -11,13 +13,5 @@ public class ReviewDomainEvent extends ApplicationEvent {
         super(source);
         this.review = review;
         this.action = action;
-    }
-
-    public Review getReview() {
-        return review;
-    }
-
-    public String getAction() {
-        return action;
     }
 }
