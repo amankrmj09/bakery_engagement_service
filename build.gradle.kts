@@ -52,10 +52,10 @@ repositories {
 extra["springCloudVersion"] = "2025.0.3"
 
 dependencies {
-    implementation("org.blubakery.libs:bakery_common_security:1.0.5")
-    implementation("org.blubakery.libs:bakery_common_messaging:1.0.6")
-    implementation("org.blubakery.libs:bakery_common_core:1.0.5")
-    implementation("org.blubakery.libs:bakery_common_feign:1.0.5")
+    implementation("org.blubakery.libs:bakery_common_security:2.0.0")
+    implementation("org.blubakery.libs:bakery_common_messaging:2.0.0")
+    implementation("org.blubakery.libs:bakery_common_core:2.0.0")
+    implementation("org.blubakery.libs:bakery_common_feign:2.0.0")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.kafka:spring-kafka")
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
@@ -70,6 +70,8 @@ dependencies {
     compileOnly("org.projectlombok:lombok")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     annotationProcessor("org.projectlombok:lombok")
+    implementation("org.mapstruct:mapstruct:1.5.5.Final")
+    annotationProcessor("org.mapstruct:mapstruct-processor:1.5.5.Final")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.kafka:spring-kafka-test")
     testCompileOnly("org.projectlombok:lombok")

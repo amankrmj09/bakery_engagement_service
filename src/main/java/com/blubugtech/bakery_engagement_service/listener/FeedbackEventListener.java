@@ -58,7 +58,7 @@ public class FeedbackEventListener {
         if ("CREATED".equals(action)) {
             try {
                 FeedbackPayload payload = FeedbackPayload.builder()
-                    .feedbackId(UUID.randomUUID())
+                    .feedbackId(feedback.getId() != null ? UUID.nameUUIDFromBytes(feedback.getId().getBytes(java.nio.charset.StandardCharsets.UTF_8)) : UUID.randomUUID())
                     .firstName(feedback.getName())
                     .customerEmail(feedback.getEmail())
                     .type(feedback.getType() != null ? feedback.getType() : "FEEDBACK")

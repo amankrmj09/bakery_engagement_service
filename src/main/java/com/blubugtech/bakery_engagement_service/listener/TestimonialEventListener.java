@@ -59,7 +59,7 @@ public class TestimonialEventListener {
         if ("CREATED".equals(action)) {
             try {
                 FeedbackPayload payload = FeedbackPayload.builder()
-                    .feedbackId(UUID.randomUUID())
+                    .feedbackId(testimonial.getId() != null ? UUID.nameUUIDFromBytes(testimonial.getId().getBytes(java.nio.charset.StandardCharsets.UTF_8)) : UUID.randomUUID())
                     .firstName(testimonial.getName())
                     .customerEmail(testimonial.getEmail())
                     .type("TESTIMONIAL")

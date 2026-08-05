@@ -61,25 +61,25 @@ public class FeedbackService {
         }
     }
 
-    public org.springframework.data.web.PagedModel<Feedback> getAllFeedbacks(org.springframework.data.domain.Pageable pageable) {
-        return new org.springframework.data.web.PagedModel<>(feedbackRepository.findAll(pageable));
+    public org.springframework.data.domain.Page<Feedback> getAllFeedbacks(org.springframework.data.domain.Pageable pageable) {
+        return feedbackRepository.findAll(pageable);
     }
 
-    public org.springframework.data.web.PagedModel<FeedbackDocument> searchFeedbacksByUsername(String query, String type, org.springframework.data.domain.Pageable pageable) {
+    public org.springframework.data.domain.Page<FeedbackDocument> searchFeedbacksByUsername(String query, String type, org.springframework.data.domain.Pageable pageable) {
         if (query == null || query.trim().isEmpty()) {
             if (type != null && !type.trim().isEmpty()) {
-                return new org.springframework.data.web.PagedModel<>(feedbackSearchRepository.findByType(type.trim(), pageable));
+                return feedbackSearchRepository.findByType(type.trim(), pageable);
             }
-            return new org.springframework.data.web.PagedModel<>(feedbackSearchRepository.findAll(pageable));
+            return feedbackSearchRepository.findAll(pageable);
         }
         
         String q = query.trim();
         if (type != null && !type.trim().isEmpty()) {
             String t = type.trim();
-            return new org.springframework.data.web.PagedModel<>(feedbackSearchRepository.findByTypeAndNameContainingIgnoreCaseOrTypeAndEmailContainingIgnoreCase(
+            return feedbackSearchRepository.findByTypeAndNameContainingIgnoreCaseOrTypeAndEmailContainingIgnoreCase(
                 t, q, t, q, pageable
-            ));
+            );
         }
-        return new org.springframework.data.web.PagedModel<>(feedbackSearchRepository.findByNameContainingIgnoreCaseOrEmailContainingIgnoreCase(q, q, pageable));
+        return feedbackSearchRepository.findByNameContainingIgnoreCaseOrEmailContainingIgnoreCase(q, q, pageable);
     }
 }

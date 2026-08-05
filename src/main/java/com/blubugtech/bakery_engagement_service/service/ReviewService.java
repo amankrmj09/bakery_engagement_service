@@ -25,6 +25,7 @@ public class ReviewService {
 
     private final ReviewRepository reviewRepository;
     private final ApplicationEventPublisher eventPublisher;
+    private final com.blubugtech.bakery_engagement_service.mapper.ReviewMapper reviewMapper;
 
     @Transactional
     public ReviewResponse addReview(String productId, ReviewRequest request) {
@@ -36,22 +37,18 @@ public class ReviewService {
             review.setComment(request.getComment());
             review.setUpdatedAt(LocalDateTime.now());
         } else {
-            review = Review.builder()
-                    .productId(productId)
-                    .orderId(request.getOrderId())
-                    .userId(request.getUserId())
-                    .userName(request.getUserName())
-                    .rating(request.getRating())
-                    .comment(request.getComment())
-                    .createdAt(LocalDateTime.now())
-                    .updatedAt(LocalDateTime.now())
-                    .build();
+            review = reviewMapper.toEntity(request);
+            review.setProductId(productId);
+            if (review.getCreatedAt() == null) {
+                review.setCreatedAt(LocalDateTime.now());
+            }
+            review.setUpdatedAt(LocalDateTime.now());
         }
 
         review = reviewRepository.save(review);
         eventPublisher.publishEvent(new ReviewDomainEvent(this, review, "CREATED"));
 
-        return ReviewResponse.fromEntity(review);
+        return reviewMapper.toResponse(review);
     }
 
     @Transactional
@@ -63,19 +60,18 @@ public class ReviewService {
             throw new IllegalArgumentException("Review does not belong to the specified product");
         }
         
-        review.setRating(request.getRating());
-        review.setComment(request.getComment());
+        reviewMapper.updateEntity(review, request);
         review.setUpdatedAt(LocalDateTime.now());
         
         review = reviewRepository.save(review);
         eventPublisher.publishEvent(new ReviewDomainEvent(this, review, "UPDATED"));
         
-        return ReviewResponse.fromEntity(review);
+        return reviewMapper.toResponse(review);
     }
 
     public org.springframework.data.web.PagedModel<ReviewResponse> getProductReviews(String productId, Pageable pageable) {
         return new org.springframework.data.web.PagedModel<>(reviewRepository.findByProductId(productId, pageable)
-                .map(ReviewResponse::fromEntity));
+                .map(reviewMapper::toResponse));
     }
 
     @Transactional
@@ -108,7 +104,7 @@ public class ReviewService {
 
     public org.springframework.data.web.PagedModel<ReviewResponse> getReportedReviews(Pageable pageable) {
         return new org.springframework.data.web.PagedModel<>(reviewRepository.findByIsReportedTrue(pageable)
-                .map(ReviewResponse::fromEntity));
+                .map(reviewMapper::toResponse));
     }
 
     @Transactional
