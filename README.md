@@ -31,30 +31,79 @@ List the core capabilities and features of this service.
 - Automatic synchronous saving to MongoDB and asynchronous indexing to Elasticsearch.
 
 ## 📁 Folder Structure
-The source code under `src/main/java` is organized as follows:
+
 ```text
-src/
-└── main/
-    └── java/com/blubugtech/bakery_engagement_service/
-        ├── controller/ # REST endpoints for engagement interactions
-        ├── dto/        # Data Transfer Objects
-        ├── entity/     # Database entities mapping to MongoDB (Testimonial, Feedback)
-        ├── repository/ # MongoDB repositories
-        ├── search/     # Elasticsearch document models and search repositories
-        └── service/    # Core logic handling data flow and admin curation constraints
+bakery_engagement_service/
+├── .env
+├── .env.example
+├── Dockerfile
+├── README.md
+├── API_REFERENCE.md
+├── build.gradle.kts
+├── settings.gradle.kts
+├── gradle.properties
+├── gradlew
+├── gradlew.bat
+└── src/
+    ├── main/
+    │   ├── java/com/blubugtech/bakery_engagement_service/
+    │   │   ├── controller/               # REST API Controllers (Testimonial, Feedback, Review, AdminReview, ContactDetails)
+    │   │   ├── dto/                      # Data Transfer Objects (Request/Response DTOs for each module)
+    │   │   │   ├── contact/
+    │   │   │   ├── feedback/
+    │   │   │   ├── review/
+    │   │   │   └── testimonial/
+    │   │   ├── entity/                   # MongoDB Domain Entities (Testimonial, Feedback, Review, ContactDetails)
+    │   │   ├── event/                    # Kafka / Domain Event payloads
+    │   │   ├── exception/                # Global Exception Handler and custom exception definitions
+    │   │   ├── listener/                 # Event Listeners for domain events
+    │   │   ├── mapper/                   # Mappers converting between Entities and DTOs
+    │   │   ├── repository/               # Spring Data MongoDB Repositories
+    │   │   ├── search/                   # Elasticsearch indexing, document models, and search repositories
+    │   │   │   ├── document/
+    │   │   │   └── repository/
+    │   │   ├── service/                  # Business Logic Services handling data flow & validation
+    │   │   └── BakeryEngagementServiceApplication.java
+    │   └── resources/
+    │       ├── application.yaml          # Primary application configuration
+    │       ├── application-docker.yml    # Docker environment profile configuration
+    │       └── logback-spring.xml        # Logging configurations
+    └── test/
+        └── java/com/blubugtech/bakery_engagement_service/
+            └── BakeryEngagementServiceApplicationTests.java
 ```
 
 ## 🌐 API Reference
 > [!NOTE]
-> For detailed API definitions, request/response bodies, and schemas, please refer to the [API_REFERENCE.md](./API_REFERENCE.md) file or the API Gateway's Swagger UI.
+> For detailed API definitions, request/response DTO schemas, and query parameters, please refer to the [API_REFERENCE.md](./API_REFERENCE.md) file or Swagger UI.
 
-**Key Endpoints:**
-- `POST /api/v1/engagement/testimonials` - Submit a new testimonial
-- `GET /api/v1/engagement/testimonials` - Retrieve testimonials (with search by username)
-- `PUT /api/v1/engagement/testimonials/{id}/feature` - Toggle featuring a testimonial on storefront
-- `GET /api/v1/engagement/testimonials/featured` - Retrieve featured testimonials (max 5)
-- `POST /api/v1/engagement/feedback` - Submit new feedback or contact message
-- `GET /api/v1/engagement/feedback` - Retrieve feedbacks (with query search)
+**Key Endpoints Overview:**
+
+- **Testimonials (`/api/engagement/testimonials`)**
+  - `POST /api/engagement/testimonials` — Submit a new testimonial
+  - `GET /api/engagement/testimonials` — Retrieve paginated list of testimonials
+  - `GET /api/engagement/testimonials/featured` — Retrieve featured testimonials
+  - `GET /api/engagement/testimonials/search` — Search testimonials by username (Elasticsearch)
+  - `PUT /api/engagement/testimonials/{id}/feature` — Toggle featured status for storefront
+  - `DELETE /api/engagement/testimonials/{id}` — Delete a testimonial
+
+- **Feedback & Contact (`/api/engagement/feedback`, `/api/engagement/contact-details`)**
+  - `POST /api/engagement/feedback` — Submit feedback or contact message
+  - `GET /api/engagement/feedback` — Retrieve paginated feedbacks
+  - `GET /api/engagement/feedback/search` — Search feedbacks by query or type (Elasticsearch)
+  - `PUT /api/engagement/feedback/{id}/status` — Update status of a feedback
+  - `DELETE /api/engagement/feedback/{id}` — Delete a feedback item
+  - `GET /api/engagement/contact-details` — Get bakery contact details
+  - `PUT /api/engagement/contact-details` — Update contact details
+
+- **Customer & Admin Reviews (`/api/engagement/reviews`, `/api/admin/engagement/reviews`)**
+  - `POST /api/engagement/reviews/product/{id}` — Add a review for a product (Protected)
+  - `PUT /api/engagement/reviews/product/{id}/{reviewId}` — Update an existing review (Protected)
+  - `GET /api/engagement/reviews/product/{id}` — Get reviews for a product
+  - `DELETE /api/engagement/reviews/product/{id}/{reviewId}` — Delete a review (Protected)
+  - `POST /api/engagement/reviews/product/{id}/{reviewId}/report` — Report inappropriate review (Protected)
+  - `GET /api/admin/engagement/reviews/reported` — Get reported reviews (Admin)
+  - `POST /api/admin/engagement/reviews/{reviewId}/dismiss-report` — Dismiss reported review (Admin)
 
 ## ⚙️ Configuration
 List required environment variables and configurations.
@@ -105,5 +154,6 @@ To run the test suite:
 - **Key Modules:** Spring Web, Spring Data MongoDB, Spring Data Elasticsearch, Spring Kafka, Eureka Client, Spring Cloud Config
 
 ## 🔗 Related Links
+- [Parent Repository](https://github.com/amankrmj09/Blu_s_Bakery)
 - [Main Platform README](../README.md)
 - [API Reference](./API_REFERENCE.md)
