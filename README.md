@@ -154,6 +154,6 @@ To run the test suite:
 - **Key Modules:** Spring Web, Spring Data MongoDB, Spring Data Elasticsearch, Spring Kafka, Eureka Client, Spring Cloud Config
 
 ## 🔗 Related Links
-- [Parent Repository](https://github.com/amankrmj09/Blu_s_Bakery)
-- [Main Platform README](../README.md)
-- [API Reference](./API_REFERENCE.md)
+
+*For overall architecture, contribution guidelines, and security policies, please refer to the main [Blu's Bakery](https://github.com/amankrmj09/Blu_s_Bakery) repository.*
+
