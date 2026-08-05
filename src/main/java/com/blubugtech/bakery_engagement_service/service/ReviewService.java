@@ -73,9 +73,9 @@ public class ReviewService {
         return ReviewResponse.fromEntity(review);
     }
 
-    public Page<ReviewResponse> getProductReviews(String productId, Pageable pageable) {
-        return reviewRepository.findByProductId(productId, pageable)
-                .map(ReviewResponse::fromEntity);
+    public org.springframework.data.web.PagedModel<ReviewResponse> getProductReviews(String productId, Pageable pageable) {
+        return new org.springframework.data.web.PagedModel<>(reviewRepository.findByProductId(productId, pageable)
+                .map(ReviewResponse::fromEntity));
     }
 
     @Transactional
@@ -106,9 +106,9 @@ public class ReviewService {
         reviewRepository.save(review);
     }
 
-    public Page<ReviewResponse> getReportedReviews(Pageable pageable) {
-        return reviewRepository.findByIsReportedTrue(pageable)
-                .map(ReviewResponse::fromEntity);
+    public org.springframework.data.web.PagedModel<ReviewResponse> getReportedReviews(Pageable pageable) {
+        return new org.springframework.data.web.PagedModel<>(reviewRepository.findByIsReportedTrue(pageable)
+                .map(ReviewResponse::fromEntity));
     }
 
     @Transactional

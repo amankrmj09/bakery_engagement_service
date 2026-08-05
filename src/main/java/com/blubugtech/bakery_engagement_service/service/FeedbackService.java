@@ -61,25 +61,25 @@ public class FeedbackService {
         }
     }
 
-    public Page<Feedback> getAllFeedbacks(int page, int size) {
-        return feedbackRepository.findAll(PageRequest.of(page, size));
+    public org.springframework.data.web.PagedModel<Feedback> getAllFeedbacks(org.springframework.data.domain.Pageable pageable) {
+        return new org.springframework.data.web.PagedModel<>(feedbackRepository.findAll(pageable));
     }
 
-    public Page<FeedbackDocument> searchFeedbacksByUsername(String query, String type, int page, int size) {
+    public org.springframework.data.web.PagedModel<FeedbackDocument> searchFeedbacksByUsername(String query, String type, org.springframework.data.domain.Pageable pageable) {
         if (query == null || query.trim().isEmpty()) {
             if (type != null && !type.trim().isEmpty()) {
-                return feedbackSearchRepository.findByType(type.trim(), PageRequest.of(page, size));
+                return new org.springframework.data.web.PagedModel<>(feedbackSearchRepository.findByType(type.trim(), pageable));
             }
-            return feedbackSearchRepository.findAll(PageRequest.of(page, size));
+            return new org.springframework.data.web.PagedModel<>(feedbackSearchRepository.findAll(pageable));
         }
         
         String q = query.trim();
         if (type != null && !type.trim().isEmpty()) {
             String t = type.trim();
-            return feedbackSearchRepository.findByTypeAndNameContainingIgnoreCaseOrTypeAndEmailContainingIgnoreCase(
-                t, q, t, q, PageRequest.of(page, size)
-            );
+            return new org.springframework.data.web.PagedModel<>(feedbackSearchRepository.findByTypeAndNameContainingIgnoreCaseOrTypeAndEmailContainingIgnoreCase(
+                t, q, t, q, pageable
+            ));
         }
-        return feedbackSearchRepository.findByNameContainingIgnoreCaseOrEmailContainingIgnoreCase(q, q, PageRequest.of(page, size));
+        return new org.springframework.data.web.PagedModel<>(feedbackSearchRepository.findByNameContainingIgnoreCaseOrEmailContainingIgnoreCase(q, q, pageable));
     }
 }

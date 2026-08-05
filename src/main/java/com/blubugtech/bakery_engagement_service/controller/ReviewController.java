@@ -56,10 +56,15 @@ public class ReviewController {
     @Operation(summary = "Get all reviews for a product")
     @GetMapping("/product/{id}")
     public ResponseEntity<org.springframework.data.web.PagedModel<ReviewResponse>> getProductReviews(
-            @PathVariable("id") String id, Pageable pageable) {
+            @PathVariable("id") String id,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(defaultValue = "createdAt") String sortBy,
+            @RequestParam(defaultValue = "DESC") String sortDir) {
         log.info("Get reviews request received for product ID: {}", id);
-        Page<ReviewResponse> reviews = reviewService.getProductReviews(id, pageable);
-        return ResponseEntity.ok(new org.springframework.data.web.PagedModel<>(reviews));
+        org.springframework.data.domain.Sort sort = org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.fromString(sortDir), sortBy);
+        org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page, size, sort);
+        return ResponseEntity.ok(reviewService.getProductReviews(id, pageable));
     }
 
     @Operation(summary = "Delete a review")

@@ -70,18 +70,18 @@ public class TestimonialService {
         }
     }
 
-    public Page<Testimonial> getFeaturedTestimonials(int page, int size) {
-        return testimonialRepository.findByIsFeaturedTrue(PageRequest.of(page, size));
+    public org.springframework.data.web.PagedModel<Testimonial> getFeaturedTestimonials(org.springframework.data.domain.Pageable pageable) {
+        return new org.springframework.data.web.PagedModel<>(testimonialRepository.findByIsFeaturedTrue(pageable));
     }
 
-    public Page<Testimonial> getAllTestimonials(int page, int size) {
-        return testimonialRepository.findAll(PageRequest.of(page, size));
+    public org.springframework.data.web.PagedModel<Testimonial> getAllTestimonials(org.springframework.data.domain.Pageable pageable) {
+        return new org.springframework.data.web.PagedModel<>(testimonialRepository.findAll(pageable));
     }
 
-    public Page<TestimonialDocument> searchTestimonialsByUsername(String username, int page, int size) {
+    public org.springframework.data.web.PagedModel<TestimonialDocument> searchTestimonialsByUsername(String username, org.springframework.data.domain.Pageable pageable) {
         if (username == null || username.trim().isEmpty()) {
-            return testimonialSearchRepository.findAll(PageRequest.of(page, size));
+            return new org.springframework.data.web.PagedModel<>(testimonialSearchRepository.findAll(pageable));
         }
-        return testimonialSearchRepository.findByNameContainingIgnoreCase(username.trim(), PageRequest.of(page, size));
+        return new org.springframework.data.web.PagedModel<>(testimonialSearchRepository.findByNameContainingIgnoreCase(username.trim(), pageable));
     }
 }

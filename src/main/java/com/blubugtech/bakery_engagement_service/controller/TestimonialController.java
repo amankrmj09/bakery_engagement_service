@@ -33,16 +33,24 @@ public class TestimonialController {
     @GetMapping
     public ResponseEntity<org.springframework.data.web.PagedModel<Testimonial>> getAllTestimonials(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") int size) {
-        return ResponseEntity.ok(new org.springframework.data.web.PagedModel<>(testimonialService.getAllTestimonials(page, size)));
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(defaultValue = "createdAt") String sortBy,
+            @RequestParam(defaultValue = "DESC") String sortDir) {
+        org.springframework.data.domain.Sort sort = org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.fromString(sortDir), sortBy);
+        org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page, size, sort);
+        return ResponseEntity.ok(testimonialService.getAllTestimonials(pageable));
     }
 
     @Operation(summary = "Get featured testimonials")
     @GetMapping("/featured")
     public ResponseEntity<org.springframework.data.web.PagedModel<Testimonial>> getFeaturedTestimonials(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") int size) {
-        return ResponseEntity.ok(new org.springframework.data.web.PagedModel<>(testimonialService.getFeaturedTestimonials(page, size)));
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(defaultValue = "createdAt") String sortBy,
+            @RequestParam(defaultValue = "DESC") String sortDir) {
+        org.springframework.data.domain.Sort sort = org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.fromString(sortDir), sortBy);
+        org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page, size, sort);
+        return ResponseEntity.ok(testimonialService.getFeaturedTestimonials(pageable));
     }
 
     @Operation(summary = "Search testimonials")
@@ -50,8 +58,12 @@ public class TestimonialController {
     public ResponseEntity<org.springframework.data.web.PagedModel<TestimonialDocument>> searchTestimonials(
             @RequestParam(required = false) String username,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") int size) {
-        return ResponseEntity.ok(new org.springframework.data.web.PagedModel<>(testimonialService.searchTestimonialsByUsername(username, page, size)));
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(defaultValue = "createdAt") String sortBy,
+            @RequestParam(defaultValue = "DESC") String sortDir) {
+        org.springframework.data.domain.Sort sort = org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.fromString(sortDir), sortBy);
+        org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page, size, sort);
+        return ResponseEntity.ok(testimonialService.searchTestimonialsByUsername(username, pageable));
     }
 
     @Operation(summary = "Toggle featured status of a testimonial")

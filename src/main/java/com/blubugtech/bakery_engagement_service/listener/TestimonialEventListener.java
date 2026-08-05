@@ -7,8 +7,8 @@ import com.blubugtech.bakery_engagement_service.search.repository.TestimonialSea
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.blubakery.common.messaging.constants.KafkaTopics;
-import org.blubakery.common.messaging.contract.messaging.FeedbackPayload;
-import org.blubakery.common.messaging.event.FeedbackEvent;
+import org.blubakery.common.messaging.feedback.FeedbackPayload;
+import org.blubakery.common.messaging.feedback.FeedbackEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;

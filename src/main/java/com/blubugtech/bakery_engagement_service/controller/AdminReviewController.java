@@ -26,10 +26,13 @@ public class AdminReviewController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<org.springframework.data.web.PagedModel<ReviewResponse>> getReportedReviews(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") int size) {
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(defaultValue = "createdAt") String sortBy,
+            @RequestParam(defaultValue = "DESC") String sortDir) {
         log.info("Get reported reviews request received");
-        Pageable pageable = PageRequest.of(page, size);
-        return ResponseEntity.ok(new org.springframework.data.web.PagedModel<>(reviewService.getReportedReviews(pageable)));
+        org.springframework.data.domain.Sort sort = org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.fromString(sortDir), sortBy);
+        org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page, size, sort);
+        return ResponseEntity.ok(reviewService.getReportedReviews(pageable));
     }
 
     @Operation(summary = "Dismiss review report")
