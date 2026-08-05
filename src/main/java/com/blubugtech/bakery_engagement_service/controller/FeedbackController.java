@@ -12,7 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/engagement/feedback")
+@RequestMapping("/api/engagement/feedback")
 @RequiredArgsConstructor
 @Tag(name = "Feedback", description = "Feedback management APIs")
 @Slf4j

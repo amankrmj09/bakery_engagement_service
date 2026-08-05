@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/v1/admin/engagement/reviews")
+@RequestMapping("/api/admin/engagement/reviews")
 @RequiredArgsConstructor
 @Tag(name = "Admin Reviews", description = "Review management APIs for admins")
 public class AdminReviewController {

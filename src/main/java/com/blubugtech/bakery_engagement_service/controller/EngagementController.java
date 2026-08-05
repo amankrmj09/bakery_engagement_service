@@ -5,7 +5,9 @@ import com.blubugtech.bakery_engagement_service.entity.Testimonial;
 import com.blubugtech.bakery_engagement_service.entity.ContactDetails;
 import com.blubugtech.bakery_engagement_service.search.document.FeedbackDocument;
 import com.blubugtech.bakery_engagement_service.search.document.TestimonialDocument;
-import com.blubugtech.bakery_engagement_service.service.EngagementService;
+import com.blubugtech.bakery_engagement_service.service.ContactDetailsService;
+import com.blubugtech.bakery_engagement_service.service.FeedbackService;
+import com.blubugtech.bakery_engagement_service.service.TestimonialService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -18,19 +20,21 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/v1/engagement")
+@RequestMapping("/api/engagement")
 @RequiredArgsConstructor
 @Tag(name = "Engagement", description = "Engagement management APIs")
 @Slf4j
 public class EngagementController {
 
-    private final EngagementService engagementService;
+    private final TestimonialService testimonialService;
+    private final FeedbackService feedbackService;
+    private final ContactDetailsService contactDetailsService;
 
     @Operation(summary = "Create a testimonial")
     @PostMapping("/testimonials")
     public ResponseEntity<Testimonial> createTestimonial(@RequestBody Testimonial testimonial) {
         log.info("Request received to create testimonial for user: {}", testimonial.getName());
-        return ResponseEntity.status(HttpStatus.CREATED).body(engagementService.createTestimonial(testimonial));
+        return ResponseEntity.status(HttpStatus.CREATED).body(testimonialService.createTestimonial(testimonial));
     }
 
     @Operation(summary = "Get all testimonials")
@@ -38,7 +42,7 @@ public class EngagementController {
     public ResponseEntity<org.springframework.data.web.PagedModel<Testimonial>> getAllTestimonials(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
-        return ResponseEntity.ok(new org.springframework.data.web.PagedModel<>(engagementService.getAllTestimonials(page, size)));
+        return ResponseEntity.ok(new org.springframework.data.web.PagedModel<>(testimonialService.getAllTestimonials(page, size)));
     }
 
     @Operation(summary = "Get featured testimonials")
@@ -46,7 +50,7 @@ public class EngagementController {
     public ResponseEntity<org.springframework.data.web.PagedModel<Testimonial>> getFeaturedTestimonials(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
-        return ResponseEntity.ok(new org.springframework.data.web.PagedModel<>(engagementService.getFeaturedTestimonials(page, size)));
+        return ResponseEntity.ok(new org.springframework.data.web.PagedModel<>(testimonialService.getFeaturedTestimonials(page, size)));
     }
 
     @Operation(summary = "Search testimonials")
@@ -55,14 +59,14 @@ public class EngagementController {
             @RequestParam(required = false) String username,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
-        return ResponseEntity.ok(new org.springframework.data.web.PagedModel<>(engagementService.searchTestimonialsByUsername(username, page, size)));
+        return ResponseEntity.ok(new org.springframework.data.web.PagedModel<>(testimonialService.searchTestimonialsByUsername(username, page, size)));
     }
 
     @Operation(summary = "Toggle featured status of a testimonial")
     @PutMapping("/testimonials/{id}/feature")
     public ResponseEntity<?> toggleFeatured(@PathVariable String id, @RequestParam boolean featured) {
         try {
-            return ResponseEntity.ok(engagementService.toggleFeatured(id, featured));
+            return ResponseEntity.ok(testimonialService.toggleFeatured(id, featured));
         } catch (IllegalStateException e) {
             log.error("Illegal state while toggling featured status", e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", e.getMessage()));
@@ -75,7 +79,7 @@ public class EngagementController {
     @Operation(summary = "Delete a testimonial")
     @DeleteMapping("/testimonials/{id}")
     public ResponseEntity<Void> deleteTestimonial(@PathVariable String id) {
-        engagementService.deleteTestimonial(id);
+        testimonialService.deleteTestimonial(id);
         return ResponseEntity.noContent().build();
     }
 
@@ -83,7 +87,7 @@ public class EngagementController {
     @PostMapping("/feedback")
     public ResponseEntity<Feedback> createFeedback(@RequestBody Feedback feedback) {
         log.info("Request received to create feedback for user: {}", feedback.getName());
-        return ResponseEntity.status(HttpStatus.CREATED).body(engagementService.createFeedback(feedback));
+        return ResponseEntity.status(HttpStatus.CREATED).body(feedbackService.createFeedback(feedback));
     }
 
     @Operation(summary = "Get all feedbacks")
@@ -91,7 +95,7 @@ public class EngagementController {
     public ResponseEntity<org.springframework.data.web.PagedModel<Feedback>> getAllFeedbacks(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
-        return ResponseEntity.ok(new org.springframework.data.web.PagedModel<>(engagementService.getAllFeedbacks(page, size)));
+        return ResponseEntity.ok(new org.springframework.data.web.PagedModel<>(feedbackService.getAllFeedbacks(page, size)));
     }
 
     @Operation(summary = "Search feedbacks")
@@ -101,31 +105,31 @@ public class EngagementController {
             @RequestParam(required = false) String type,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
-        return ResponseEntity.ok(new org.springframework.data.web.PagedModel<>(engagementService.searchFeedbacksByUsername(query, type, page, size)));
+        return ResponseEntity.ok(new org.springframework.data.web.PagedModel<>(feedbackService.searchFeedbacksByUsername(query, type, page, size)));
     }
 
     @Operation(summary = "Delete feedback")
     @DeleteMapping("/feedback/{id}")
     public ResponseEntity<Void> deleteFeedback(@PathVariable String id) {
-        engagementService.deleteFeedback(id);
+        feedbackService.deleteFeedback(id);
         return ResponseEntity.noContent().build();
     }
 
     @Operation(summary = "Update feedback status")
     @PutMapping("/feedback/{id}/status")
     public ResponseEntity<Feedback> updateFeedbackStatus(@PathVariable String id, @RequestParam String status) {
-        return ResponseEntity.ok(engagementService.updateFeedbackStatus(id, status));
+        return ResponseEntity.ok(feedbackService.updateFeedbackStatus(id, status));
     }
 
     @Operation(summary = "Get contact details")
     @GetMapping("/contact-details")
     public ResponseEntity<ContactDetails> getContactDetails() {
-        return ResponseEntity.ok(engagementService.getContactDetails());
+        return ResponseEntity.ok(contactDetailsService.getContactDetails());
     }
 
     @Operation(summary = "Update contact details")
     @PutMapping("/contact-details")
     public ResponseEntity<ContactDetails> updateContactDetails(@RequestBody ContactDetails request) {
-        return ResponseEntity.ok(engagementService.updateContactDetails(request));
+        return ResponseEntity.ok(contactDetailsService.updateContactDetails(request));
     }
 }

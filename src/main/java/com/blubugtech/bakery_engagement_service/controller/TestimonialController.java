@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/v1/engagement/testimonials")
+@RequestMapping("/api/engagement/testimonials")
 @RequiredArgsConstructor
 @Tag(name = "Testimonial", description = "Testimonial management APIs")
 @Slf4j

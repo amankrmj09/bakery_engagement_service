@@ -20,7 +20,7 @@ import java.util.Map;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/v1/engagement/reviews")
+@RequestMapping("/api/engagement/reviews")
 @RequiredArgsConstructor
 @Tag(name = "Reviews", description = "Review management APIs for customers")
 public class ReviewController {
