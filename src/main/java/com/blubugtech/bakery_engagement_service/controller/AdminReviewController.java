@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.blubakery.common.core.dto.RestPageResponse;
 @Slf4j
 @RestController
-@RequestMapping("/api/admin/engagement/reviews")
+@RequestMapping("/api/engagement/reviews")
 @RequiredArgsConstructor
 @Tag(name = "Admin Reviews", description = "Review management APIs for admins")
 public class AdminReviewController {
