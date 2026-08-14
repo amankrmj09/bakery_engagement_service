@@ -14,7 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import org.blubakery.common.core.dto.RestPageResponse;
 @RestController
 @RequestMapping("/api/engagement/testimonials")
 @RequiredArgsConstructor
@@ -35,31 +35,33 @@ public class TestimonialController {
 
     @Operation(summary = "Get all testimonials")
     @GetMapping
-    public ResponseEntity<org.springframework.data.web.PagedModel<TestimonialResponse>> getAllTestimonials(
+    public ResponseEntity<RestPageResponse<TestimonialResponse>> getAllTestimonials(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
             @RequestParam(defaultValue = "createdAt") String sortBy,
             @RequestParam(defaultValue = "DESC") String sortDir) {
         org.springframework.data.domain.Sort sort = org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.fromString(sortDir), sortBy);
         org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page, size, sort);
-        return ResponseEntity.ok(new org.springframework.data.web.PagedModel<>(testimonialService.getAllTestimonials(pageable).map(testimonialMapper::toResponse)));
+        org.springframework.data.domain.Page<TestimonialResponse> pageResult = testimonialService.getAllTestimonials(pageable).map(testimonialMapper::toResponse);
+        return ResponseEntity.ok(new RestPageResponse<>(pageResult.getContent(), pageResult.getPageable(), pageResult.getTotalElements()));
     }
 
     @Operation(summary = "Get featured testimonials")
     @GetMapping("/featured")
-    public ResponseEntity<org.springframework.data.web.PagedModel<TestimonialResponse>> getFeaturedTestimonials(
+    public ResponseEntity<RestPageResponse<TestimonialResponse>> getFeaturedTestimonials(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
             @RequestParam(defaultValue = "createdAt") String sortBy,
             @RequestParam(defaultValue = "DESC") String sortDir) {
         org.springframework.data.domain.Sort sort = org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.fromString(sortDir), sortBy);
         org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page, size, sort);
-        return ResponseEntity.ok(new org.springframework.data.web.PagedModel<>(testimonialService.getFeaturedTestimonials(pageable).map(testimonialMapper::toResponse)));
+        org.springframework.data.domain.Page<TestimonialResponse> pageResult = testimonialService.getFeaturedTestimonials(pageable).map(testimonialMapper::toResponse);
+        return ResponseEntity.ok(new RestPageResponse<>(pageResult.getContent(), pageResult.getPageable(), pageResult.getTotalElements()));
     }
 
     @Operation(summary = "Search testimonials")
     @GetMapping("/search")
-    public ResponseEntity<org.springframework.data.web.PagedModel<TestimonialResponse>> searchTestimonials(
+    public ResponseEntity<RestPageResponse<TestimonialResponse>> searchTestimonials(
             @RequestParam(required = false) String username,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
@@ -67,7 +69,8 @@ public class TestimonialController {
             @RequestParam(defaultValue = "DESC") String sortDir) {
         org.springframework.data.domain.Sort sort = org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.fromString(sortDir), sortBy);
         org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page, size, sort);
-        return ResponseEntity.ok(new org.springframework.data.web.PagedModel<>(testimonialService.searchTestimonialsByUsername(username, pageable).map(testimonialMapper::toResponse)));
+        org.springframework.data.domain.Page<TestimonialResponse> pageResult = testimonialService.searchTestimonialsByUsername(username, pageable).map(testimonialMapper::toResponse);
+        return ResponseEntity.ok(new RestPageResponse<>(pageResult.getContent(), pageResult.getPageable(), pageResult.getTotalElements()));
     }
 
     @Operation(summary = "Toggle featured status of a testimonial")

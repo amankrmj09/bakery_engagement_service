@@ -69,9 +69,9 @@ public class ReviewService {
         return reviewMapper.toResponse(review);
     }
 
-    public org.springframework.data.web.PagedModel<ReviewResponse> getProductReviews(String productId, Pageable pageable) {
-        return new org.springframework.data.web.PagedModel<>(reviewRepository.findByProductId(productId, pageable)
-                .map(reviewMapper::toResponse));
+    public org.springframework.data.domain.Page<ReviewResponse> getProductReviews(String productId, Pageable pageable) {
+        return reviewRepository.findByProductId(productId, pageable)
+                .map(reviewMapper::toResponse);
     }
 
     @Transactional
@@ -102,9 +102,9 @@ public class ReviewService {
         reviewRepository.save(review);
     }
 
-    public org.springframework.data.web.PagedModel<ReviewResponse> getReportedReviews(Pageable pageable) {
-        return new org.springframework.data.web.PagedModel<>(reviewRepository.findByIsReportedTrue(pageable)
-                .map(reviewMapper::toResponse));
+    public org.springframework.data.domain.Page<ReviewResponse> getReportedReviews(Pageable pageable) {
+        return reviewRepository.findByIsReportedTrue(pageable)
+                .map(reviewMapper::toResponse);
     }
 
     @Transactional

@@ -14,7 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import org.blubakery.common.core.dto.RestPageResponse;
 @RestController
 @RequestMapping("/api/engagement/feedback")
 @RequiredArgsConstructor
@@ -35,19 +35,20 @@ public class FeedbackController {
 
     @Operation(summary = "Get all feedbacks")
     @GetMapping
-    public ResponseEntity<org.springframework.data.web.PagedModel<FeedbackResponse>> getAllFeedbacks(
+    public ResponseEntity<RestPageResponse<FeedbackResponse>> getAllFeedbacks(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
             @RequestParam(defaultValue = "createdAt") String sortBy,
             @RequestParam(defaultValue = "DESC") String sortDir) {
         org.springframework.data.domain.Sort sort = org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.fromString(sortDir), sortBy);
         org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page, size, sort);
-        return ResponseEntity.ok(new org.springframework.data.web.PagedModel<>(feedbackService.getAllFeedbacks(pageable).map(feedbackMapper::toResponse)));
+        org.springframework.data.domain.Page<FeedbackResponse> pageResult = feedbackService.getAllFeedbacks(pageable).map(feedbackMapper::toResponse);
+        return ResponseEntity.ok(new RestPageResponse<>(pageResult.getContent(), pageResult.getPageable(), pageResult.getTotalElements()));
     }
 
     @Operation(summary = "Search feedbacks")
     @GetMapping("/search")
-    public ResponseEntity<org.springframework.data.web.PagedModel<FeedbackResponse>> searchFeedbacks(
+    public ResponseEntity<RestPageResponse<FeedbackResponse>> searchFeedbacks(
             @RequestParam(required = false) String query,
             @RequestParam(required = false) String type,
             @RequestParam(defaultValue = "0") int page,
@@ -56,7 +57,8 @@ public class FeedbackController {
             @RequestParam(defaultValue = "DESC") String sortDir) {
         org.springframework.data.domain.Sort sort = org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.fromString(sortDir), sortBy);
         org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page, size, sort);
-        return ResponseEntity.ok(new org.springframework.data.web.PagedModel<>(feedbackService.searchFeedbacksByUsername(query, type, pageable).map(feedbackMapper::toResponse)));
+        org.springframework.data.domain.Page<FeedbackResponse> pageResult = feedbackService.searchFeedbacksByUsername(query, type, pageable).map(feedbackMapper::toResponse);
+        return ResponseEntity.ok(new RestPageResponse<>(pageResult.getContent(), pageResult.getPageable(), pageResult.getTotalElements()));
     }
 
     @Operation(summary = "Update feedback status")
