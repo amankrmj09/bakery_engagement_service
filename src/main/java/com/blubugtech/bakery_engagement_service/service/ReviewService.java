@@ -107,6 +107,11 @@ public class ReviewService {
                 .map(reviewMapper::toResponse);
     }
 
+    public org.springframework.data.domain.Page<ReviewResponse> getAllReviews(Pageable pageable) {
+        return reviewRepository.findAll(pageable)
+                .map(reviewMapper::toResponse);
+    }
+
     @Transactional
     public void dismissReviewReport(String reviewId) {
         Review review = reviewRepository.findById(reviewId)

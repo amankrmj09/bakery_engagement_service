@@ -36,6 +36,21 @@ public class AdminReviewController {
         return ResponseEntity.ok(new RestPageResponse<>(pageResult.getContent(), pageResult.getPageable(), pageResult.getTotalElements()));
     }
 
+    @Operation(summary = "Get all reviews")
+    @GetMapping("/all")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<RestPageResponse<ReviewResponse>> getAllReviews(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(defaultValue = "createdAt") String sortBy,
+            @RequestParam(defaultValue = "DESC") String sortDir) {
+        log.info("Get all reviews request received");
+        org.springframework.data.domain.Sort sort = org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.fromString(sortDir), sortBy);
+        org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page, size, sort);
+        org.springframework.data.domain.Page<ReviewResponse> pageResult = reviewService.getAllReviews(pageable);
+        return ResponseEntity.ok(new RestPageResponse<>(pageResult.getContent(), pageResult.getPageable(), pageResult.getTotalElements()));
+    }
+
     @Operation(summary = "Dismiss review report")
     @PostMapping("/{reviewId}/dismiss-report")
     @PreAuthorize("hasRole('ADMIN')")
